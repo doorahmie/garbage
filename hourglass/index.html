@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    #sandglass {
+      width: 100px;
+      height: 200px;
+      border: 5px solid #333;
+      overflow: hidden;
+      position: relative;
+    }
+    #sand {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #ffd700 50%, #cd853f 50%);
+      transition: transform 1s linear;
+      transform-origin: bottom;
+    }
+  </style>
+</head>
+<body>
+
+<div id="sandglass">
+  <div id="sand"></div>
+</div>
+
+<script>
+  let sand = document.getElementById('sand');
+  let initialTime = Date.now();
+  let gravity = 9.81; // 중력 가속도 (m/s^2)
+
+  function updateSand() {
+    let elapsedTime = (Date.now() - initialTime) / 1000; // 초 단위로 변환
+    let displacement = 0.5 * gravity * elapsedTime * elapsedTime;
+
+    // 제한된 시간(모래시계의 높이) 동안만 모래가 흐르도록 설정
+    if (displacement < 100) {
+      sand.style.transform = `translateY(-${displacement}px)`;
+      requestAnimationFrame(updateSand);
+    }
+  }
+
+  // DeviceMotionEvent를 사용하여 중력 센서 정보 감지
+  window.addEventListener('devicemotion', function(event) {
+    // 중력 가속도 정보는 event.accelerationIncludingGravity에서 얻을 수 있음
+    gravity = event.accelerationIncludingGravity.y;
+
+    // 중력 센서 정보를 기반으로 모래 갱신
+    updateSand();
+  });
+
+  // 초기에 모래 갱신
+  updateSand();
+</script>
+
+</body>
+</html>
